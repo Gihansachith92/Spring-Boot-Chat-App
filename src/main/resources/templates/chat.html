@@ -28,4 +28,26 @@
 
     </div>
 </body>
+<script>
+    function setConnected(connected) {
+        document.getElementById("sendMessage").disabled = !connected;
+    }
+
+   function connect() {
+       var socket = new SockJS('/chat');
+       stompClient = Stomp.over(socket);
+       stompClient.connect({}, function (frame){
+            setConnected(true);
+            stompClient.subscribe('/topic/messages', function (message){
+                showMessage(JSON.parse(message.body));
+            });
+       });
+
+       function showMessage(message) {
+           var chat = document.getElementById('chat');
+           var messageElement = document.createElement('div');
+           messageElement.textContent = message.sender + ': ' +message.content;
+       }
+   }
+</script>
 </html>
